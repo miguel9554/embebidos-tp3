@@ -1,7 +1,7 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
-configDescList=org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9 Debug,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9 Release,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16 Debug,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16 Release
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16 Debug,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16 Release,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9 Debug,org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9 Release
 eclipse.preferences.version=1
-org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9\ Debug/activeLaunchMode=debug
-org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_1_to_9\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16\ Debug/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:freertos_examples_10_to_16\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
