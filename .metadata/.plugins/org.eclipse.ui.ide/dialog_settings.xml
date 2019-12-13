@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="/home/miguel/Downloads/freertos_examples_10_to_16.zip"/>
+		<item value="/home/miguel/Downloads/freertos_examples_1_to_9.zip"/>
+	</list>
+	<section name="NewWizardAction">
+	</section>
+</section>
