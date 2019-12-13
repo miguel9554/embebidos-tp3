@@ -47,7 +47,7 @@
 #define EXAMPLE_15 (15)		/* Re-writing vPrintString() to use a semaphore */
 #define EXAMPLE_16 (16)		/* Re-writing vPrintString() to use a gatekeeper task */
 
-#define TEST (EXAMPLE_10)
+#define TEST (0)
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -64,7 +64,7 @@ static void prvSetupHardware(void)
 	Board_Init();
 
 	/* Initial LED state is off */
-	Board_LED_Set(LED, LED_OFF);
+	Board_LED_Set(LED3, LED_OFF);
 }
 
 
@@ -95,7 +95,7 @@ static void vSenderTask(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_ON);
+		Board_LED_Set(LED3, LED_ON);
 
 		/* The first parameter is the queue to which data is being sent.  The
 		 * queue was created before the scheduler was started, so before this task
@@ -130,7 +130,7 @@ static void vReceiverTask(void *pvParameters)
 
 
 	while (1) {
-		Board_LED_Set(LED, LED_OFF);
+		Board_LED_Set(LED3, LED_OFF);
 
 		/* As this task unblocks immediately that data is written to the queue this
 		 * call should always find the queue empty. */
@@ -190,14 +190,14 @@ int main(void)
 		 * so one task will continuously write 100 to the queue while the other task
 		 * will continuously write 200 to the queue.  Both tasks are created at
 		 * priority 1. */
-		xTaskCreate(vSenderTask, (signed char *) "vSender1", configMINIMAL_STACK_SIZE, (void *) 100,
+		xTaskCreate(vSenderTask, (char *) "vSender1", configMINIMAL_STACK_SIZE, (void *) 100,
 					(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
-		xTaskCreate(vSenderTask, (signed char *) "vSender2", configMINIMAL_STACK_SIZE, (void *) 200,
+		xTaskCreate(vSenderTask, (char *) "vSender2", configMINIMAL_STACK_SIZE, (void *) 200,
 					(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 		/* Create the task that will read from the queue.  The task is created with
 		 * priority 2, so above the priority of the sender tasks. */
-		xTaskCreate(vReceiverTask, (signed char *) "vReceiver", configMINIMAL_STACK_SIZE, NULL,
+		xTaskCreate(vReceiverTask, (char *) "vReceiver", configMINIMAL_STACK_SIZE, NULL,
 					(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -255,7 +255,7 @@ static void vSenderTask(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_ON);
+		Board_LED_Set(LED3, LED_ON);
 
 		/* The first parameter is the queue to which data is being sent.  The
 		 * queue was created before the scheduler was started, so before this task
@@ -270,6 +270,7 @@ static void vSenderTask(void *pvParameters)
 		 * will become full.  Items will only be removed from the queue when both
 		 * sending tasks are in the Blocked state.. */
 		xStatus = xQueueSendToBack(xQueue, pvParameters, xTicksToWait);
+		DEBUGOUT("A\r\n");
 
 		if (xStatus != pdPASS) {
 			/* We could not write to the queue because it was full - this must
@@ -292,7 +293,7 @@ static void vReceiverTask(void *pvParameters)
 
 	/* This task is also defined within an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_OFF);
+		Board_LED_Set(LED3, LED_OFF);
 
 		/* As this task only runs when the sending tasks are in the Blocked state,
 		 * and the sending tasks only block when the queue is full, this task should
@@ -358,14 +359,14 @@ int main(void)
 		 * queue, so one task will continuously send xStructsToSend[ 0 ] to the queue
 		 * while the other task will continuously send xStructsToSend[ 1 ].  Both
 		 * tasks are created at priority 2 which is above the priority of the receiver. */
-		xTaskCreate(vSenderTask, (signed char *) "vSender1", configMINIMAL_STACK_SIZE, (void *) &(xStructsToSend[0]),
+		xTaskCreate(vSenderTask, (char *) "vSender1", configMINIMAL_STACK_SIZE, (void *) &(xStructsToSend[0]),
 					(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
-		xTaskCreate(vSenderTask, (signed char *) "vSender2", configMINIMAL_STACK_SIZE, (void *) &(xStructsToSend[1]),
+		xTaskCreate(vSenderTask, (char *) "vSender2", configMINIMAL_STACK_SIZE, (void *) &(xStructsToSend[1]),
 					(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 		/* Create the task that will read from the queue.  The task is created with
 		 * priority 1, so below the priority of the sender tasks. */
-		xTaskCreate(vReceiverTask, (signed char *) "vReceiver", configMINIMAL_STACK_SIZE, NULL,
+		xTaskCreate(vReceiverTask, (char *) "vReceiver", configMINIMAL_STACK_SIZE, NULL,
 					(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -393,6 +394,7 @@ const char *pcTextForMain = "\r\nExample 12 - Using a counting semaphore to sync
 /* The interrupt number to use for the software interrupt generation.  This
  * could be any unused number.  In this case the first chip level (non system)
  * interrupt is used, which happens to be the watchdog on the LPC1768.  WDT_IRQHandler */
+/* interrupt is used, which happens to be the DAC on the LPC4337 M4.  DAC_IRQHandler */
 #define mainSW_INTERRUPT_ID		(0)
 
 /* Macro to force an interrupt. */
@@ -418,8 +420,8 @@ static void prvSetupSoftwareInterrupt();
 
 /* The service routine for the interrupt.  This is the interrupt that the
  * task will be synchronized with.  void vSoftwareInterruptHandler(void); */
-#define vSoftwareInterruptHandler (WDT_IRQHandler)
-
+/* the watchdog on the LPC1768 => WDT_IRQHandler */ /* the DAC on the LPC4337 M4.  DAC_IRQHandler */
+#define vSoftwareInterruptHandler (DAC_IRQHandler)
 /* Declare a variable of type xSemaphoreHandle.  This is used to reference the
  * semaphore that is used to synchronize a task with an interrupt. */
 xSemaphoreHandle xBinarySemaphore;
@@ -436,7 +438,7 @@ static void vHandlerTask(void *pvParameters)
     xSemaphoreTake(xBinarySemaphore, (portTickType) 0);
 
 	while (1) {
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Use the semaphore to wait for the event.  The task blocks
          * indefinitely meaning this function call will only return once the
@@ -533,13 +535,13 @@ int main(void)
          * with the interrupt.  The handler task is created with a high priority to
          * ensure it runs immediately after the interrupt exits.  In this case a
          * priority of 3 is chosen. */
-        xTaskCreate(vHandlerTask, (signed char *) "Handler", configMINIMAL_STACK_SIZE, NULL,
+        xTaskCreate(vHandlerTask, (char *) "Handler", configMINIMAL_STACK_SIZE, NULL,
         			(tskIDLE_PRIORITY + 3UL), (xTaskHandle *) NULL);
 
         /* Create the task that will periodically generate a software interrupt.
          * This is created with a priority below the handler task to ensure it will
          * get preempted each time the handler task exits the Blocked state. */
-        xTaskCreate(vPeriodicTask, (signed char *) "Periodic", configMINIMAL_STACK_SIZE, NULL,
+        xTaskCreate(vPeriodicTask, (char *) "Periodic", configMINIMAL_STACK_SIZE, NULL,
         			(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
         /* Start the scheduler so the created tasks start executing. */
@@ -565,6 +567,7 @@ const char *pcTextForMain = "\r\nExample 13 - Using a binary semaphore to synchr
 /* The interrupt number to use for the software interrupt generation.  This
  * could be any unused number.  In this case the first chip level (non system)
  * interrupt is used, which happens to be the watchdog on the LPC1768.  WDT_IRQHandler */
+/* interrupt is used, which happens to be the DAC on the LPC4337 M4.  DAC_IRQHandler */
 #define mainSW_INTERRUPT_ID		(0)
 
 /* Macro to force an interrupt. */
@@ -590,7 +593,8 @@ static void prvSetupSoftwareInterrupt();
 
 /* The service routine for the interrupt.  This is the interrupt that the
 * task will be synchronized with.  void vSoftwareInterruptHandler(void); */
-#define vSoftwareInterruptHandler (WDT_IRQHandler)
+/* the watchdog on the LPC1768 => WDT_IRQHandler */ /* the DAC on the LPC4337 M4.  DAC_IRQHandler */
+#define vSoftwareInterruptHandler (DAC_IRQHandler)
 
 /* Declare a variable of type xSemaphoreHandle.  This is used to reference the
  * semaphore that is used to synchronize a task with an interrupt. */
@@ -602,7 +606,7 @@ static void vHandlerTask(void *pvParameters)
 {
 	/* As per most tasks, this task is implemented within an infinite loop. */
 	while (1) {
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Use the semaphore to wait for the event.  The semaphore was created
 		 * before the scheduler was started so before this task ran for the first
@@ -709,13 +713,13 @@ int main(void)
 		with the interrupt.  The handler task is created with a high priority to
 		ensure it runs immediately after the interrupt exits.  In this case a
 		priority of 3 is chosen. */
-        xTaskCreate(vHandlerTask, (signed char *) "Handler", configMINIMAL_STACK_SIZE, NULL,
+        xTaskCreate(vHandlerTask, (char *) "Handler", configMINIMAL_STACK_SIZE, NULL,
         			(tskIDLE_PRIORITY + 3UL), (xTaskHandle *) NULL);
 
 		/* Create the task that will periodically generate a software interrupt.
 		This is created with a priority below the handler task to ensure it will
 		get preempted each time the handler task exist the Blocked state. */
-        xTaskCreate(vPeriodicTask, (signed char *) "Periodic", configMINIMAL_STACK_SIZE, NULL,
+        xTaskCreate(vPeriodicTask, (char *) "Periodic", configMINIMAL_STACK_SIZE, NULL,
         			(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 		/* Start the scheduler so the created tasks start executing. */
@@ -740,6 +744,7 @@ const char *pcTextForMain = "\r\nExample 14 - Sending and receiving on a queue f
 /* The interrupt number to use for the software interrupt generation.  This
  * could be any unused number.  In this case the first chip level (non system)
  * interrupt is used, which happens to be the watchdog on the LPC1768.  WDT_IRQHandler */
+/* interrupt is used, which happens to be the DAC on the LPC4337 M4.  DAC_IRQHandler */
 #define mainSW_INTERRUPT_ID		(0)
 
 /* Macro to force an interrupt. */
@@ -765,7 +770,8 @@ static void prvSetupSoftwareInterrupt();
 
 /* The service routine for the interrupt.  This is the interrupt that the
 * task will be synchronized with.  void vSoftwareInterruptHandler(void); */
-#define vSoftwareInterruptHandler (WDT_IRQHandler)
+/* the watchdog on the LPC1768 => WDT_IRQHandler */ /* the DAC on the LPC4337 M4.  DAC_IRQHandler */
+#define vSoftwareInterruptHandler (DAC_IRQHandler)
 
 unsigned long ulNext = 0;
 unsigned long ulCount;
@@ -788,7 +794,7 @@ static void vIntegerGenerator(void *pvParameters)
 
 	/* As per most tasks, this task is implemented within an infinite loop. */
 	while (1) {
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* This is a periodic task.  Block until it is time to run again.
 		 * The task will execute every 200ms. */
@@ -908,12 +914,12 @@ int main(void)
 
 	/* Create the task that uses a queue to pass integers to the interrupt service
 	routine.  The task is created at priority 1. */
-   	xTaskCreate(vIntegerGenerator, (signed char *) "IntGen", configMINIMAL_STACK_SIZE, NULL,
+   	xTaskCreate(vIntegerGenerator, (char *) "IntGen", configMINIMAL_STACK_SIZE, NULL,
    				(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
     /* Create the task that prints out the strings sent to it from the interrupt
      * service routine.  This task is created at the higher priority of 2. */
-    xTaskCreate(vStringPrinter, (signed char *) "String", configMINIMAL_STACK_SIZE, NULL,
+    xTaskCreate(vStringPrinter, (char *) "String", configMINIMAL_STACK_SIZE, NULL,
         			(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler so the created tasks start executing. */
@@ -1024,10 +1030,10 @@ int main(void)
 		/* Create two instances of the tasks that attempt to write stdout.  The
 		 * string they attempt to write is passed in as the task parameter.  The tasks
 		 * are created at different priorities so some pre-emption will occur. */
-		xTaskCreate(prvPrintTask, (signed char *) "Print1", configMINIMAL_STACK_SIZE,
+		xTaskCreate(prvPrintTask, (char *) "Print1", configMINIMAL_STACK_SIZE,
 					"Task 1 ******************************************\r\n",
 					(tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
-		xTaskCreate(prvPrintTask, (signed char *) "Print2", configMINIMAL_STACK_SIZE,
+		xTaskCreate(prvPrintTask, (char *) "Print2", configMINIMAL_STACK_SIZE,
 					"Task 2 ------------------------------------------\r\n",
 					(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
@@ -1093,7 +1099,7 @@ static void prvStdioGatekeeperTask(void *pvParameters)
 		DEBUGOUT(cBuffer);
 
 		/* Now simply go back to wait for the next message. */
-	}
+		}
 }
 
 
@@ -1172,14 +1178,14 @@ int main(void)
 		The	index to the string they attempt to write is passed in as the task
 		parameter (4th parameter to xTaskCreate()).  The tasks are created at
 		different priorities so some pre-emption will occur. */
-		xTaskCreate(prvPrintTask, (signed char *) "Print1", configMINIMAL_STACK_SIZE,
+		xTaskCreate(prvPrintTask, (char *) "Print1", configMINIMAL_STACK_SIZE,
 					(void *) 0, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
-		xTaskCreate(prvPrintTask, (signed char *) "Print2", configMINIMAL_STACK_SIZE,
+		xTaskCreate(prvPrintTask, (char *) "Print2", configMINIMAL_STACK_SIZE,
 					(void *) 1, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 		/* Create the gatekeeper task.  This is the only task that is permitted
 		 * to access standard out. */
-		xTaskCreate(prvStdioGatekeeperTask, (signed char *) "Gatekeeper", configMINIMAL_STACK_SIZE,
+		xTaskCreate(prvStdioGatekeeperTask, (char *) "Gatekeeper", configMINIMAL_STACK_SIZE,
 					(void * ) NULL, (tskIDLE_PRIORITY + 0UL), (xTaskHandle *) NULL);
 
 		/* Start the scheduler so the created tasks start executing. */

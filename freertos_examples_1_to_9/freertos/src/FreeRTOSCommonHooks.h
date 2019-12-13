@@ -65,7 +65,7 @@ void vApplicationIdleHook(void);
  * @return	Nothing
  * @note	This function is alled when a stack overflow occurs.
  */
-void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName);
+void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);
 
 /**
  * @brief	FreeRTOS application tick hook

@@ -1,21 +1,22 @@
-FLASH read/write/signature example
+FreeRTOS Blinky example
 
 Example description
-The IAP example demonstrates programming a FLASH block during run-time and
-generating a FLASH signature. For this example, the code is running from FLASH
-and a FLASH block not used for the executing code will be erased and programmed
-with some data. After the program is complete, the signature for the programmed
-area is generated. The example also toggles the LED in the systick interrupt.
-The interrupts need to be disabled during the IAP calls that change FLASH data
-and re-enabled after the calls are complete.>br>
+Welcome to the FreeRTOS basic blinky example. This example starts up
+FreeRTOS and creates 3 tasks. Tasks 1 and 2 blink different LEDs at
+different rates. Task 3 outputs a tick count to the debug channel (UART)
+every second.
 
-Do not run this example too many times or set it up to repeatedly erase and
-reprogram FLASH as it will wear out FLASH.
+By default, tickless idle is used with this example for FreeRTOS. Normal
+tick operation can be used by setting the configUSE_TICKLESS_IDLE definition
+to 0 in FreeRTOSConfig.h.
+
+To use the example, connect a serial cable to the board's RS232/UART port
+and start a terminal program (115.2K8N1) to monitor the port. The LEDs will
+also toggle based on the task execution.
 
 Special connection requirements
 There are no special connection requirements for this example.
 
 Build procedures:
-Visit the LPCOpen quickstart guides at link "http://www.lpcware.com/content/project/lpcopen-platform-nxp-lpc-microcontrollers/lpcopen-v200-quickstart-guides"
+Visit the <a href="http://www.lpcware.com/content/project/lpcopen-platform-nxp-lpc-microcontrollers/lpcopen-v200-quickstart-guides">LPCOpen quickstart guides</a>
 to get started building LPCOpen projects.
-

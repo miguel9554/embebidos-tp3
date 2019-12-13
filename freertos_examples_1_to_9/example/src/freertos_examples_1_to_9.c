@@ -66,7 +66,7 @@ static void prvSetupHardware(void)
 	Board_Init();
 
 	/* Initial LED state is off */
-	Board_LED_Set(LED, LED_OFF);
+	Board_LED_Set(LED3, LED_OFF);
 }
 
 
@@ -90,7 +90,7 @@ static void vTask1(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_ON);
+		Board_LED_Set(LED3, LED_ON);
 
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
@@ -113,7 +113,7 @@ static void vTask2(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_OFF);
+		Board_LED_Set(LED3, LED_OFF);
 
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
@@ -127,6 +127,10 @@ static void vTask2(void *pvParameters)
 	}
 }
 
+/*void vApplicationTickHook()
+{
+	Board_LED_Toggle(LED2);
+}*/
 
 /*****************************************************************************
  * Public functions
@@ -145,14 +149,14 @@ int main(void)
 
 	/* Create one of the two tasks. */
 	xTaskCreate(vTask1,										/* Pointer to the function thats implement the task. */
-				(signed char *) "Task1",					/* Text name for the task. This is to facilitate debugging only. */
+				(char *) "Task1",							/* Text name for the task. This is to facilitate debugging only. */
 				configMINIMAL_STACK_SIZE,					/* Stack depth in words. */
 				NULL,										/* We are not using the task parameter. */
 				(tskIDLE_PRIORITY + 1UL),					/* This task will run at priority 1. */
 				(xTaskHandle *) NULL);						/* We are not going to use the task handle. */
 
 	/* Create the other task in exactly the same way. */
-	xTaskCreate(vTask2, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTask2, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				NULL, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler so our tasks start executing. */
@@ -200,7 +204,7 @@ static void vTaskFunction(void *pvParameters) {
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Delay for a period. */
 		for (ul = 0; ul < mainDELAY_LOOP_COUNT; ul++) {
@@ -229,7 +233,7 @@ int main(void)
 
 	/* Create one of the two tasks. */
 	xTaskCreate(vTaskFunction,							/* Pointer to the function thats implement the task. */
-			(signed char *) "Task1",					/* Text name for the task. This is to facilitate debugging only. */
+			(char *) "Task1",							/* Text name for the task. This is to facilitate debugging only. */
 			configMINIMAL_STACK_SIZE,					/* Stack depth in words. */
 			(void *) pcTextForTask1,					/* Pass the text to be printed in as the task parameter. */
 			(tskIDLE_PRIORITY + 1UL),					/* This task will run at priority 1. */
@@ -238,7 +242,7 @@ int main(void)
 	/* Create the other task in exactly the same way.  Note this time that we
 	 * are creating the SAME task, but passing in a different parameter.  We are
 	 * creating two instances of a single task implementation. */
-	xTaskCreate(vTaskFunction, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -286,7 +290,7 @@ static void vTaskFunction(void *pvParameters) {
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Delay for a period. */
 		for (ul = 0; ul < mainDELAY_LOOP_COUNT; ul++) {
@@ -314,12 +318,12 @@ int main(void)
 	DEBUGOUT(pcTextForMain);
 
 	/* Create the first task at priority 1... */
-	xTaskCreate(vTaskFunction, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* ... and the second task at priority 2.  The priority is the second to
 	 * last parameter. */
-	xTaskCreate(vTaskFunction, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -363,7 +367,7 @@ static void vTaskFunction(void *pvParameters) {
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Delay for a period.  This time we use a call to vTaskDelay() which
 		 * puts the task into the Blocked state until the delay period has expired.
@@ -389,12 +393,12 @@ int main(void)
 	DEBUGOUT(pcTextForMain);
 
 	/* Create the first task at priority 1... */
-	xTaskCreate(vTaskFunction, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* ... and the second task at priority 2.  The priority is the second to
 	last parameter. */
-	xTaskCreate(vTaskFunction, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -446,7 +450,7 @@ static void vTaskFunction(void *pvParameters) {
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* We want this task to execute exactly every 250 milliseconds.  As per
 		 * the vTaskDelay() function, time is measured in ticks, and the
@@ -474,12 +478,12 @@ int main(void)
 	DEBUGOUT(pcTextForMain);
 
 	/* Create the first task at priority 1... */
-	xTaskCreate(vTaskFunction, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* ... and the second task at priority 2.  The priority is the second to
 	 * last parameter. */
-	xTaskCreate(vTaskFunction, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -531,7 +535,7 @@ static void vContinuousProcessingTask(void *pvParameters) {
 		 * without ever blocking or delaying. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* A null loop has been inserted just to slow down the rate at which
 		 * messages are sent down the debug link to the console.  Without this
@@ -568,7 +572,7 @@ static void vPeriodicTask(void *pvParameters) {
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
 
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* We want this task to execute exactly every 10 milliseconds. */
 		vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_RATE_MS));
@@ -592,13 +596,13 @@ int main(void)
 	DEBUGOUT(pcTextForMain);
 
 	/* Create two instances of the continuous processing task, both at priority	1. */
-	xTaskCreate(vContinuousProcessingTask, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vContinuousProcessingTask, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
-	xTaskCreate(vContinuousProcessingTask, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vContinuousProcessingTask, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* Create one instance of the periodic task at priority 2. */
-	xTaskCreate(vPeriodicTask, (signed char *) "Task 3", configMINIMAL_STACK_SIZE, (void *) pcTextForPeriodicTask,
+	xTaskCreate(vPeriodicTask, (char *) "Task 3", configMINIMAL_STACK_SIZE, (void *) pcTextForPeriodicTask,
 				(tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -643,7 +647,7 @@ static void vTaskFunction(void *pvParameters) {
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Toggle(LED);
+		Board_LED_Toggle(LED3);
 
 		/* Print out the name of this task AND the number of times ulIdleCycleCount
 		 * has been incremented. */
@@ -686,12 +690,12 @@ int main(void)
 	DEBUGOUT(pcTextForMain);
 
 	/* Create the first task at priority 1... */
-	xTaskCreate(vTaskFunction, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 
 	/* ... and the second task at priority 2.  The priority is the second to
 	 * last parameter. */
-	xTaskCreate(vTaskFunction, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTaskFunction, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 
 	/* Start the scheduler */
@@ -746,7 +750,7 @@ static void vTask1(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_ON);
+		Board_LED_Set(LED3, LED_ON);
 
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
@@ -784,7 +788,7 @@ static void vTask2(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_OFF);
+		Board_LED_Set(LED3, LED_OFF);
 
 		/* For this task to reach this point Task1 must have already run and
 		 * set the priority of this task higher than its own.
@@ -820,7 +824,7 @@ int main(void)
 	/* Create the first task at priority 2.  This time the task parameter is
 	 * not used and is set to NULL.  The task handle is also not used so likewise
 	 * is also set to NULL. */
-	xTaskCreate(vTask1, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTask1, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 2UL), (xTaskHandle *) NULL);
 	/* The task is created at priority 2....................^^^. */
 
@@ -828,7 +832,7 @@ int main(void)
 	 * given to Task1.  Again the task parameter is not used so is set to NULL -
 	 * BUT this time we want to obtain a handle to the task so pass in the address
 	 * of the xTask2Handle variable. */
-	xTaskCreate(vTask2, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTask2, (char *) "Task2", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask2, (tskIDLE_PRIORITY + 1UL), &xTask2Handle);
 	/* The task handle is the last parameter......................^^^^^^^^^^^^^ */
 
@@ -876,7 +880,7 @@ static void vTask1(void *pvParameters)
 
 	/* As per most tasks, this task is implemented in an infinite loop. */
 	while (1) {
-		Board_LED_Set(LED, LED_ON);
+		Board_LED_Set(LED3, LED_ON);
 
 		/* Print out the name of this task. */
 		DEBUGOUT(pcTaskName);
@@ -884,7 +888,7 @@ static void vTask1(void *pvParameters)
 		/* Create task 2 at a higher priority.  Again the task parameter is not
 		 * used so is set to NULL - BUT this time we want to obtain a handle to the
 		 * task so pass in the address of the xTask2Handle variable. */
-		xTaskCreate(vTask2, (signed char *) "Task2", configMINIMAL_STACK_SIZE,
+		xTaskCreate(vTask2, (char *) "Task2", configMINIMAL_STACK_SIZE,
 					(void *) pcTextForTask2, (tskIDLE_PRIORITY + 2UL), &xTask2Handle);
 		/* The task handle is the last parameter......................^^^^^^^^^^^^^ */
 
@@ -905,7 +909,7 @@ static void vTask2(void *pvParameters)
 	 * character pointer. */
 	pcTaskName = (char *) pvParameters;
 
-	Board_LED_Set(LED, LED_OFF);
+	Board_LED_Set(LED3, LED_OFF);
 
 	/* Task2 does nothing but delete itself.  To do this it could call vTaskDelete()
 	 * using a NULL parameter, but instead and purely for demonstration purposes it
@@ -934,7 +938,7 @@ int main(void)
 	/* Create the first task at priority 1.  This time the task parameter is
 	 * not used and is set to NULL.  The task handle is also not used so likewise
 	 * is also set to NULL. */
-	xTaskCreate(vTask1, (signed char *) "Task1", configMINIMAL_STACK_SIZE,
+	xTaskCreate(vTask1, (char *) "Task1", configMINIMAL_STACK_SIZE,
 				(void *) pcTextForTask1, (tskIDLE_PRIORITY + 1UL), (xTaskHandle *) NULL);
 	/* The task is created at priority 1....................^^^. */
 

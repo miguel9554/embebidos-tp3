@@ -1,5 +1,5 @@
 /*
- * @brief Common SystemInit function for LPC17xx/40xx chips
+ * @brief Common SystemInit function for LPC18xx/LPC43xx chips
  *
  * @note
  * Copyright(C) NXP Semiconductors, 2013
@@ -29,8 +29,6 @@
  * this code.
  */
 
- #include "board.h"
-
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -38,6 +36,14 @@
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
+
+#if defined(NO_BOARD_LIB)
+#include "chip.h"
+const uint32_t ExtRateIn = 0;
+const uint32_t OscRateIn = 12000000;
+#else
+#include "board.h"
+#endif
 
 /*****************************************************************************
  * Private functions
@@ -50,6 +56,7 @@
 /* Set up and initialize hardware prior to call to main */
 void SystemInit(void)
 {
+#if defined(CORE_M3) || defined(CORE_M4)
 	unsigned int *pSCB_VTOR = (unsigned int *) 0xE000ED08;
 
 #if defined(__IAR_SYSTEMS_ICC__)
@@ -74,7 +81,9 @@ void SystemInit(void)
 	/* Chip specific SystemInit */
 	Chip_SystemInit();
 #else
-	/* Setup system clocking and muxing */
+	/* Board specific SystemInit */
 	Board_SystemInit();
 #endif
+
+#endif /* defined(CORE_M3) || defined(CORE_M4) */
 }

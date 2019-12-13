@@ -43,7 +43,6 @@
 #else
 #define __WEAK__   __attribute__((weak))
 #endif
-
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -59,7 +58,7 @@
 /* Delay for the specified number of milliSeconds */
 void FreeRTOSDelay(uint32_t ms)
 {
-	portTickType xDelayTime;
+	TickType_t xDelayTime;
 
 	xDelayTime = xTaskGetTickCount();
 	vTaskDelayUntil(&xDelayTime, ms);
@@ -81,7 +80,7 @@ __WEAK__ void vApplicationIdleHook(void)
 }
 
 /* FreeRTOS stack overflow hook */
-__WEAK__ void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
+__WEAK__ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 {
 	(void) pxTask;
 	(void) pcTaskName;

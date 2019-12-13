@@ -30,7 +30,7 @@ all: freertos_examples_10_to_16.axf
 freertos_examples_10_to_16.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"C:\Users\JMCruz\Documents\LPCXpresso_8.2.0_647\workspace-TP3\lpc_chip_175x_6x\Debug" -L"C:\Users\JMCruz\Documents\LPCXpresso_8.2.0_647\workspace-TP3\lpc_board_nxp_lpcxpresso_1769\Debug" -Xlinker -Map="freertos_examples_10_to_16.map" -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T "freertos_examples_10_to_16_Debug.ld" -o "freertos_examples_10_to_16.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"C:\Users\Admin\Documents\git\embebidos\TP3_embebidos\lpc_chip_43xx\Debug" -L"C:\Users\Admin\Documents\git\embebidos\TP3_embebidos\lpc_board_nxp_lpcxpresso_4337\Debug" -Xlinker -Map="freertos_examples_10_to_16.map" -Xlinker --gc-sections -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mthumb -T "freertos_examples_10_to_16_Debug.ld" -o "freertos_examples_10_to_16.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -42,10 +42,9 @@ clean:
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "freertos_examples_10_to_16.axf"; # arm-none-eabi-objcopy -v -O binary "freertos_examples_10_to_16.axf" "freertos_examples_10_to_16.bin" ; # checksum -p LPC1769 -d "freertos_examples_10_to_16.bin";
+	-arm-none-eabi-size "freertos_examples_10_to_16.axf"; # arm-none-eabi-objcopy -v -O binary "freertos_examples_10_to_16.axf" "freertos_examples_10_to_16.bin" ; # checksum -p LPC4337 -d "freertos_examples_10_to_16.bin";
 	-@echo ' '
 
-.PHONY: all clean dependents
-.SECONDARY: post-build
+.PHONY: all clean dependents post-build
 
 -include ../makefile.targets
